@@ -3,6 +3,8 @@ package org.team340.robot;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.revrobotics.CANSparkBase.ExternalFollower;
+import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.CalibrationTime;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.SPI.Port;
@@ -11,6 +13,11 @@ import org.team340.lib.controller.Controller2Config;
 import org.team340.lib.swerve.config.SwerveConfig;
 import org.team340.lib.swerve.config.SwerveModuleConfig;
 import org.team340.lib.swerve.hardware.motors.SwerveMotor;
+import org.team340.lib.util.Math2;
+import org.team340.lib.util.config.rev.SparkAbsoluteEncoderConfig;
+import org.team340.lib.util.config.rev.SparkMaxConfig;
+import org.team340.lib.util.config.rev.SparkMaxConfig.Frame;
+import org.team340.lib.util.config.rev.SparkPIDControllerConfig;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -68,6 +75,55 @@ public final class Constants {
         public static final int BACK_RIGHT_TURN = 7;
         public static final int FRONT_RIGHT_MOVE = 8;
         public static final int FRONT_RIGHT_TURN = 9;
+
+        public static final int WRIST_MOTOR = 20;
+
+        public static final int INTAKE_UPPER_MOTOR = 30;
+        public static final int INTAKE_LOWER_MOTOR = 31;
+        public static final int INTAKE_INNER_MOTOR = 32;
+    }
+
+    public static final class IntakeConstants {
+
+        // Speeds
+        public enum IntakeSpeed {
+            INTAKE_OUTER(0.25),
+            INTAKE_INNER(0.3),
+            SHOOT_SHORT(-0.35),
+            SHOOT_MEDIUM(-0.6),
+            SHOOT_FAR(-1.0),
+            SHOOT_INNER(-1.0);
+
+            public final double value;
+
+            private IntakeSpeed(double value) {
+                this.value = value;
+            }
+        }
+
+        // Hardware Configs
+        public static final class Configs {
+
+            private static final SparkMaxConfig MOTOR_BASE = new SparkMaxConfig()
+                .clearFaults()
+                .restoreFactoryDefaults()
+                .enableVoltageCompensation(VOLTAGE)
+                .setSmartCurrentLimit(30)
+                .setIdleMode(IdleMode.kCoast)
+                .setPeriodicFramePeriod(Frame.S0, 20)
+                .setPeriodicFramePeriod(Frame.S1, 20)
+                .setPeriodicFramePeriod(Frame.S2, 20)
+                .setPeriodicFramePeriod(Frame.S3, 10000)
+                .setPeriodicFramePeriod(Frame.S4, 10000)
+                .setPeriodicFramePeriod(Frame.S5, 10000)
+                .setPeriodicFramePeriod(Frame.S6, 10000);
+
+            public static final SparkMaxConfig UPPER_MOTOR = MOTOR_BASE.clone().setInverted(false);
+            public static final SparkMaxConfig LOWER_MOTOR = MOTOR_BASE
+                .clone()
+                .follow(ExternalFollower.kFollowerSpark, RobotMap.INTAKE_UPPER_MOTOR, true);
+            public static final SparkMaxConfig INNER_MOTOR = MOTOR_BASE.clone().setInverted(true);
+        }
     }
 
     /**
@@ -110,7 +166,7 @@ public final class Constants {
             .setMoveFF(0.1, 2.5, 0.0)
             .setTurnPID(0.65, 0.001, 3.0, 0.01)
             .setRampRate(0.03, 0.03)
-            .setMotorTypes(SwerveMotor.Type.SPARK_FLEX_BRUSHLESS, SwerveMotor.Type.SPARK_FLEX_BRUSHLESS)
+            .setMotorTypes(SwerveMotor.Type.SPARK_MAX_BRUSHLESS, SwerveMotor.Type.SPARK_MAX_BRUSHLESS)
             .setMaxSpeeds(5.0, 12.0)
             .setRatelimits(11.0, 30.0)
             .setTrajectoryConstraints(4.0, 8.0)
@@ -126,5 +182,66 @@ public final class Constants {
             .addModule(BACK_LEFT)
             .addModule(BACK_RIGHT)
             .addModule(FRONT_RIGHT);
+    }
+
+    public static final class WristConstants {
+
+        // Limits
+        public static final double MIN_POS = Math.toRadians(30.0);
+        public static final double MAX_POS = Math.toRadians(180.0);
+
+        // Positions
+        public enum WristPosition {
+            INTAKE(Math.toRadians(35.0)),
+            SAFE(Math.toRadians(165.0)),
+            SHOOT_SHORT(Math.toRadians(70.0)),
+            SHOOT_MEDIUM(Math.toRadians(75.0)),
+            SHOOT_FAR(Math.toRadians(80.0));
+
+            public final double value;
+
+            private WristPosition(double value) {
+                this.value = value;
+            }
+        }
+
+        // Misc
+        public static final double CLOSED_LOOP_ERR = Math.toRadians(3.0);
+
+        // Hardware Configs
+        public static final class Configs {
+
+            // Encoder Conversion Factor
+            private static final double ENC_FACTOR = Math2.TWO_PI;
+
+            public static final SparkMaxConfig MOTOR = new SparkMaxConfig()
+                .clearFaults()
+                .restoreFactoryDefaults()
+                .enableVoltageCompensation(VOLTAGE)
+                .setSmartCurrentLimit(30)
+                .setIdleMode(IdleMode.kBrake)
+                .setInverted(false)
+                .setClosedLoopRampRate(0.8)
+                .setOpenLoopRampRate(1.0)
+                .setPeriodicFramePeriod(Frame.S0, 20)
+                .setPeriodicFramePeriod(Frame.S1, 20)
+                .setPeriodicFramePeriod(Frame.S2, 20)
+                .setPeriodicFramePeriod(Frame.S3, 10000)
+                .setPeriodicFramePeriod(Frame.S4, 10000)
+                .setPeriodicFramePeriod(Frame.S5, 20)
+                .setPeriodicFramePeriod(Frame.S6, 20);
+
+            public static final SparkAbsoluteEncoderConfig ENCODER = new SparkAbsoluteEncoderConfig()
+                .setPositionConversionFactor(ENC_FACTOR)
+                .setVelocityConversionFactor(ENC_FACTOR / 60)
+                .setInverted(false)
+                .setZeroOffset(3.338);
+
+            public static final SparkPIDControllerConfig PID = new SparkPIDControllerConfig()
+                .setPID(1.1, 0.0, 0.3)
+                .setIZone(0.0)
+                .setOutputRange(-0.9, 0.9)
+                .setPositionPIDWrappingEnabled(false);
+        }
     }
 }

@@ -1,14 +1,15 @@
 package org.team340.robot;
 
-import static edu.wpi.first.wpilibj2.command.Commands.*;
-
-import org.team340.lib.GRRDashboard;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import org.team340.lib.controller.Controller2;
 import org.team340.lib.util.Math2;
 import org.team340.lib.util.config.rev.RevConfigRegistry;
 import org.team340.robot.Constants.ControllerConstants;
-import org.team340.robot.commands.SystemsCheck;
+import org.team340.robot.Constants.WristConstants.WristPosition;
+import org.team340.robot.commands.Routines;
+import org.team340.robot.subsystems.Intake;
 import org.team340.robot.subsystems.Swerve;
+import org.team340.robot.subsystems.Wrist;
 
 /**
  * This class is used to declare subsystems, commands, and trigger mappings.
@@ -20,9 +21,10 @@ public final class RobotContainer {
     }
 
     private static Controller2 driver;
-    private static Controller2 coDriver;
 
+    public static Intake intake;
     public static Swerve swerve;
+    public static Wrist wrist;
 
     /**
      * Entry to initializing subsystems and command execution.
@@ -30,20 +32,17 @@ public final class RobotContainer {
     public static void init() {
         // Initialize controllers.
         driver = new Controller2(ControllerConstants.DRIVER);
-        coDriver = new Controller2(ControllerConstants.CO_DRIVER);
 
         // Add controllers to the dashboard.
         driver.addToDashboard();
-        coDriver.addToDashboard();
 
         // Initialize subsystems.
+        intake = new Intake();
         swerve = new Swerve();
+        wrist = new Wrist();
 
         // Add subsystems to the dashboard.
         swerve.addToDashboard();
-
-        // Set systems check command.
-        GRRDashboard.setSystemsCheck(SystemsCheck.command());
 
         // Complete REV hardware initialization.
         RevConfigRegistry.burnFlash();
@@ -51,7 +50,6 @@ public final class RobotContainer {
 
         // Configure bindings and autos.
         configBindings();
-        configAutos();
     }
 
     /**
@@ -62,26 +60,34 @@ public final class RobotContainer {
         // Set default commands.
         swerve.setDefaultCommand(swerve.drive(RobotContainer::getDriveX, RobotContainer::getDriveY, RobotContainer::getDriveRotate, true));
 
+        Routines.onDisable().schedule();
+        RobotModeTriggers.disabled().onTrue(Routines.onDisable());
+
         /**
          * Driver bindings.
          */
 
+        // A => Intake (Hold)
+        driver.a().whileTrue(Routines.intake()).onFalse(wrist.goTo(WristPosition.SAFE));
+
+        // B => Shoot short (Hold)
+        driver.b().whileTrue(Routines.shootShort()).onFalse(wrist.goTo(WristPosition.SAFE));
+
+        // X => Shoot medium (Hold)
+        driver.x().whileTrue(Routines.shootMedium()).onFalse(wrist.goTo(WristPosition.SAFE));
+
+        // Y => Shoot far (Hold)
+        driver.y().whileTrue(Routines.shootFar()).onFalse(wrist.goTo(WristPosition.SAFE));
+
         // POV Left => Zero swerve
         driver.povLeft().onTrue(swerve.zeroIMU(Math2.ROTATION2D_0));
 
-        /**
-         * Co-driver bindings.
-         */
-
-        // A => Do nothing
-        coDriver.a().onTrue(none());
+        // Back and Start => Toggle robot relative driving
+        driver
+            .back()
+            .and(driver.start())
+            .toggleOnTrue(swerve.drive(RobotContainer::getDriveX, RobotContainer::getDriveY, RobotContainer::getDriveRotate, false));
     }
-
-    /**
-     * Autonomous commands should be declared here and
-     * added to {@link GRRDashboard}.
-     */
-    private static void configAutos() {}
 
     /**
      * Gets the X axis drive speed from the driver's controller.

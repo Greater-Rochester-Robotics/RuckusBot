@@ -1,6 +1,5 @@
 package org.team340.robot;
 
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -27,9 +26,6 @@ public final class Robot extends TimedRobot {
         LiveWindow.disableAllTelemetry();
         DriverStation.silenceJoystickConnectionWarning(true);
 
-        DataLogManager.start();
-        DataLogManager.logNetworkTables(true);
-        DriverStation.startDataLog(DataLogManager.getLog());
         GRRDashboard.initSync(this, Constants.TELEMETRY_PERIOD, Constants.POWER_USAGE_PERIOD);
         RevConfigRegistry.init(this);
         RobotContainer.init();
@@ -47,9 +43,7 @@ public final class Robot extends TimedRobot {
     public void disabledPeriodic() {}
 
     @Override
-    public void autonomousInit() {
-        GRRDashboard.getAutoCommand().schedule();
-    }
+    public void autonomousInit() {}
 
     @Override
     public void autonomousPeriodic() {}
