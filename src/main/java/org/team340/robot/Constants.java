@@ -75,6 +75,10 @@ public final class Constants {
         public static final int BACK_RIGHT_TURN = 7;
         public static final int FRONT_RIGHT_MOVE = 8;
         public static final int FRONT_RIGHT_TURN = 9;
+        public static final int FRONT_LEFT_ENCODER = 10;
+        public static final int BACK_LEFT_ENCODER = 11;
+        public static final int BACK_RIGHT_ENCODER = 12;
+        public static final int FRONT_RIGHT_ENCODER = 13;
 
         public static final int WRIST_MOTOR = 20;
 
@@ -133,45 +137,45 @@ public final class Constants {
 
         private static final SwerveModuleConfig FRONT_LEFT = new SwerveModuleConfig()
             .setLabel("Front Left")
-            .useSparkAttachedEncoder(2.389, true)
+            .useCANcoder(RobotMap.FRONT_LEFT_ENCODER, -3.8534, false)
             .setPosition(0.288925, 0.288925)
-            .setMoveMotor(RobotMap.FRONT_LEFT_MOVE, true, true)
+            .setMoveMotor(RobotMap.FRONT_LEFT_MOVE, true, false)
             .setTurnMotor(RobotMap.FRONT_LEFT_TURN, false, true);
 
         private static final SwerveModuleConfig BACK_LEFT = new SwerveModuleConfig()
             .setLabel("Back Left")
-            .useSparkAttachedEncoder(1.999, true)
+            .useCANcoder(RobotMap.BACK_LEFT_ENCODER, -3.1124, false)
             .setPosition(-0.288925, 0.288925)
-            .setMoveMotor(RobotMap.BACK_LEFT_MOVE, true, true)
+            .setMoveMotor(RobotMap.BACK_LEFT_MOVE, true, false)
             .setTurnMotor(RobotMap.BACK_LEFT_TURN, false, true);
 
         private static final SwerveModuleConfig BACK_RIGHT = new SwerveModuleConfig()
             .setLabel("Back Right")
-            .useSparkAttachedEncoder(4.194, true)
+            .useCANcoder(RobotMap.BACK_RIGHT_ENCODER, -6.2234, false)
             .setPosition(-0.288925, -0.288925)
-            .setMoveMotor(RobotMap.BACK_RIGHT_MOVE, true, true)
+            .setMoveMotor(RobotMap.BACK_RIGHT_MOVE, true, false)
             .setTurnMotor(RobotMap.BACK_RIGHT_TURN, false, true);
 
         private static final SwerveModuleConfig FRONT_RIGHT = new SwerveModuleConfig()
             .setLabel("Front Right")
-            .useSparkAttachedEncoder(5.566, true)
+            .useCANcoder(RobotMap.FRONT_RIGHT_ENCODER, -3.0265, false)
             .setPosition(0.288925, -0.288925)
-            .setMoveMotor(RobotMap.FRONT_RIGHT_MOVE, true, true)
+            .setMoveMotor(RobotMap.FRONT_RIGHT_MOVE, true, false)
             .setTurnMotor(RobotMap.FRONT_RIGHT_TURN, false, true);
 
         public static final SwerveConfig CONFIG = new SwerveConfig()
             .useADIS16470(IMUAxis.kZ, IMUAxis.kX, IMUAxis.kY, Port.kOnboardCS0, CalibrationTime._4s)
             .setPeriod(PERIOD)
-            .setMovePID(0.3, 0.0, 0.0, 0.0)
-            .setMoveFF(0.1, 2.5, 0.0)
+            .setMovePID(0.2, 0.0, 0.0, 0.0)
+            .setMoveFF(0.05, 2.35, 0.0)
             .setTurnPID(0.65, 0.001, 3.0, 0.01)
             .setRampRate(0.03, 0.03)
             .setMotorTypes(SwerveMotor.Type.SPARK_MAX_BRUSHLESS, SwerveMotor.Type.SPARK_MAX_BRUSHLESS)
-            .setMaxSpeeds(5.0, 12.0)
-            .setRatelimits(11.0, 30.0)
+            .setMaxSpeeds(5.3, 12.3)
+            .setRatelimits(11.0, 28.0)
             .setTrajectoryConstraints(4.0, 8.0)
-            .setPowerProperties(VOLTAGE, 80.0, 40.0)
-            .setMechanicalProperties(6.75, 150.0 / 7.0, 4.0)
+            .setPowerProperties(VOLTAGE, 40.0, 40.0)
+            .setMechanicalProperties(7.5, 10.0, 4.0)
             .setDiscretizationLookahead(PERIOD)
             .setOdometryPeriod(PERIOD)
             .setOdometryStd(0.003, 0.003, 0.0012)
