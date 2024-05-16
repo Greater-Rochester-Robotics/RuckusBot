@@ -41,6 +41,22 @@ public class Intake extends GRRSubsystem {
             .onEnd(() -> {
                 upperMotor.stopMotor();
                 lowerMotor.stopMotor();
+                innerMotor.stopMotor();
+            });
+    }
+
+    /**
+     * Sets the outer rollers to shoot, while keeping the inner rollers stopped. Does not end.
+     * @param shootSpeed The speed to apply to the outer rollers.
+     */
+    public Command prepShoot(IntakeSpeed shootSpeed) {
+        return commandBuilder("intake.shoot(" + shootSpeed + ")")
+            .onInitialize(() -> {
+                upperMotor.set(shootSpeed.value);
+                innerMotor.stopMotor();
+            })
+            .onEnd(() -> {
+                upperMotor.stopMotor();
                 lowerMotor.stopMotor();
             });
     }
@@ -58,7 +74,7 @@ public class Intake extends GRRSubsystem {
             .onEnd(() -> {
                 upperMotor.stopMotor();
                 lowerMotor.stopMotor();
-                lowerMotor.stopMotor();
+                innerMotor.stopMotor();
             });
     }
 

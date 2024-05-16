@@ -1,5 +1,7 @@
 package org.team340.robot;
 
+import static edu.wpi.first.wpilibj2.command.Commands.parallel;
+
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import org.team340.lib.controller.Controller2;
 import org.team340.lib.util.Math2;
@@ -8,6 +10,8 @@ import org.team340.robot.Constants.ControllerConstants;
 import org.team340.robot.Constants.WristConstants.WristPosition;
 import org.team340.robot.commands.Routines;
 import org.team340.robot.subsystems.Intake;
+import org.team340.robot.subsystems.Lights;
+import org.team340.robot.subsystems.Lights.DrivingMode;
 import org.team340.robot.subsystems.Swerve;
 import org.team340.robot.subsystems.Wrist;
 
@@ -23,6 +27,7 @@ public final class RobotContainer {
     private static Controller2 driver;
 
     public static Intake intake;
+    public static Lights lights;
     public static Swerve swerve;
     public static Wrist wrist;
 
@@ -38,6 +43,7 @@ public final class RobotContainer {
 
         // Initialize subsystems.
         intake = new Intake();
+        lights = new Lights();
         swerve = new Swerve();
         wrist = new Wrist();
 
@@ -58,7 +64,13 @@ public final class RobotContainer {
      */
     private static void configBindings() {
         // Set default commands.
-        swerve.setDefaultCommand(swerve.drive(RobotContainer::getDriveX, RobotContainer::getDriveY, RobotContainer::getDriveRotate, true));
+        lights.setDefaultCommand(lights.idle());
+        swerve.setDefaultCommand(
+            parallel(
+                swerve.drive(RobotContainer::getDriveX, RobotContainer::getDriveY, RobotContainer::getDriveRotate, true),
+                lights.setDrivingMode(DrivingMode.FIELD_RELATIVE)
+            )
+        );
 
         Routines.onDisable().schedule();
         RobotModeTriggers.disabled().onTrue(Routines.onDisable());
@@ -82,11 +94,25 @@ public final class RobotContainer {
         // POV Left => Zero swerve
         driver.povLeft().onTrue(swerve.zeroIMU(Math2.ROTATION2D_0));
 
-        // Back and Start => Toggle robot relative driving
+        // Back => Toggle arcade driving
         driver
             .back()
-            .and(driver.start())
-            .toggleOnTrue(swerve.drive(RobotContainer::getDriveX, RobotContainer::getDriveY, RobotContainer::getDriveRotate, false));
+            .toggleOnTrue(
+                parallel(
+                    swerve.drive(RobotContainer::getDriveX, () -> 0.0, RobotContainer::getDriveYRotate, false),
+                    lights.setDrivingMode(DrivingMode.ARCADE)
+                )
+            );
+
+        // Start => Toggle robot relative driving
+        driver
+            .start()
+            .toggleOnTrue(
+                parallel(
+                    swerve.drive(RobotContainer::getDriveX, RobotContainer::getDriveY, RobotContainer::getDriveRotate, false),
+                    lights.setDrivingMode(DrivingMode.ROBOT_RELATIVE)
+                )
+            );
     }
 
     /**
@@ -105,6 +131,13 @@ public final class RobotContainer {
         double multiplier =
             ((driver.getHID().getLeftStickButton()) ? ControllerConstants.DRIVE_MULTIPLIER_MODIFIED : ControllerConstants.DRIVE_MULTIPLIER);
         return -driver.getLeftX(multiplier, ControllerConstants.DRIVE_EXP);
+    }
+
+    /**
+     * Gets the Y axis rotational drive speed from the driver's controller.
+     */
+    private static double getDriveYRotate() {
+        return -driver.getLeftX(ControllerConstants.DRIVE_ROT_MULTIPLIER, ControllerConstants.DRIVE_ROT_EXP);
     }
 
     /**

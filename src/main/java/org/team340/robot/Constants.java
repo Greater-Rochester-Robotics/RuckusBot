@@ -38,7 +38,7 @@ public final class Constants {
      */
     public static final class ControllerConstants {
 
-        public static final double DRIVE_EXP = 1.0;
+        public static final double DRIVE_EXP = 2.0;
         public static final double DRIVE_MULTIPLIER = 0.9;
         public static final double DRIVE_MULTIPLIER_MODIFIED = 1.0;
 
@@ -48,14 +48,6 @@ public final class Constants {
         public static final Controller2Config DRIVER = new Controller2Config()
             .setLabel("Driver")
             .setPort(0)
-            .setJoystickDeadband(0.15)
-            .setJoystickThreshold(0.7)
-            .setTriggerDeadband(0.1)
-            .setTriggerThreshold(0.1);
-
-        public static final Controller2Config CO_DRIVER = new Controller2Config()
-            .setLabel("CoDriver")
-            .setPort(1)
             .setJoystickDeadband(0.15)
             .setJoystickThreshold(0.7)
             .setTriggerDeadband(0.1)
@@ -85,8 +77,13 @@ public final class Constants {
         public static final int INTAKE_UPPER_MOTOR = 30;
         public static final int INTAKE_LOWER_MOTOR = 31;
         public static final int INTAKE_INNER_MOTOR = 32;
+
+        public static final int LIGHTS = 9;
     }
 
+    /**
+     * Constants for the intake subsystem.
+     */
     public static final class IntakeConstants {
 
         // Speeds
@@ -128,6 +125,14 @@ public final class Constants {
                 .follow(ExternalFollower.kFollowerSpark, RobotMap.INTAKE_UPPER_MOTOR, true);
             public static final SparkMaxConfig INNER_MOTOR = MOTOR_BASE.clone().setInverted(true);
         }
+    }
+
+    /**
+     * Constants for the lights subsystem.
+     */
+    public static final class LightsConstants {
+
+        public static final int LENGTH = 56;
     }
 
     /**
@@ -188,19 +193,22 @@ public final class Constants {
             .addModule(FRONT_RIGHT);
     }
 
+    /**
+     * Constants for the wrist subsystem.
+     */
     public static final class WristConstants {
 
         // Limits
-        public static final double MIN_POS = Math.toRadians(30.0);
-        public static final double MAX_POS = Math.toRadians(180.0);
+        public static final double MIN_POS = Math.toRadians(20.0);
+        public static final double MAX_POS = Math.toRadians(120.0);
 
         // Positions
         public enum WristPosition {
-            INTAKE(Math.toRadians(35.0)),
-            SAFE(Math.toRadians(165.0)),
-            SHOOT_SHORT(Math.toRadians(70.0)),
-            SHOOT_MEDIUM(Math.toRadians(75.0)),
-            SHOOT_FAR(Math.toRadians(80.0));
+            INTAKE(Math.toRadians(115.0)),
+            SAFE(Math.toRadians(25.0)),
+            SHOOT_SHORT(Math.toRadians(50.0)),
+            SHOOT_MEDIUM(Math.toRadians(50.0)),
+            SHOOT_FAR(Math.toRadians(45.0));
 
             public final double value;
 
@@ -225,8 +233,8 @@ public final class Constants {
                 .setSmartCurrentLimit(30)
                 .setIdleMode(IdleMode.kBrake)
                 .setInverted(false)
-                .setClosedLoopRampRate(0.8)
-                .setOpenLoopRampRate(1.0)
+                .setClosedLoopRampRate(0.4)
+                .setOpenLoopRampRate(0.8)
                 .setPeriodicFramePeriod(Frame.S0, 20)
                 .setPeriodicFramePeriod(Frame.S1, 20)
                 .setPeriodicFramePeriod(Frame.S2, 20)
