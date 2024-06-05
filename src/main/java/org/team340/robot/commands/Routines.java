@@ -29,7 +29,7 @@ public class Routines {
     private static Command shoot(IntakeSpeed shootSpeed, WristPosition wristPosition) {
         return parallel(
             sequence(
-                parallel(intake.prepShoot(shootSpeed), wrist.goTo(wristPosition)),
+                deadline(wrist.goTo(wristPosition), intake.prepShoot(shootSpeed)),
                 parallel(intake.shoot(shootSpeed), wrist.maintainPosition())
             ),
             lights.flames()

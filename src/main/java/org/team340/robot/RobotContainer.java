@@ -48,7 +48,10 @@ public final class RobotContainer {
         wrist = new Wrist();
 
         // Add subsystems to the dashboard.
+        intake.addToDashboard();
+        lights.addToDashboard();
         swerve.addToDashboard();
+        wrist.addToDashboard();
 
         // Complete REV hardware initialization.
         RevConfigRegistry.burnFlash();

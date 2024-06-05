@@ -123,7 +123,7 @@ public final class Constants {
             public static final SparkMaxConfig LOWER_MOTOR = MOTOR_BASE
                 .clone()
                 .follow(ExternalFollower.kFollowerSpark, RobotMap.INTAKE_UPPER_MOTOR, true);
-            public static final SparkMaxConfig INNER_MOTOR = MOTOR_BASE.clone().setInverted(true);
+            public static final SparkMaxConfig INNER_MOTOR = MOTOR_BASE.clone().setInverted(false);
         }
     }
 
@@ -200,12 +200,12 @@ public final class Constants {
 
         // Limits
         public static final double MIN_POS = Math.toRadians(20.0);
-        public static final double MAX_POS = Math.toRadians(120.0);
+        public static final double MAX_POS = Math.toRadians(125.0);
 
         // Positions
         public enum WristPosition {
-            INTAKE(Math.toRadians(115.0)),
-            SAFE(Math.toRadians(25.0)),
+            INTAKE(Math.toRadians(118.0)),
+            SAFE(Math.toRadians(30.0)),
             SHOOT_SHORT(Math.toRadians(50.0)),
             SHOOT_MEDIUM(Math.toRadians(50.0)),
             SHOOT_FAR(Math.toRadians(45.0));
@@ -218,7 +218,7 @@ public final class Constants {
         }
 
         // Misc
-        public static final double CLOSED_LOOP_ERR = Math.toRadians(3.0);
+        public static final double CLOSED_LOOP_ERR = Math.toRadians(4.0);
 
         // Hardware Configs
         public static final class Configs {
@@ -232,8 +232,8 @@ public final class Constants {
                 .enableVoltageCompensation(VOLTAGE)
                 .setSmartCurrentLimit(30)
                 .setIdleMode(IdleMode.kBrake)
-                .setInverted(false)
-                .setClosedLoopRampRate(0.4)
+                .setInverted(true)
+                .setClosedLoopRampRate(0.3)
                 .setOpenLoopRampRate(0.8)
                 .setPeriodicFramePeriod(Frame.S0, 20)
                 .setPeriodicFramePeriod(Frame.S1, 20)
@@ -246,13 +246,12 @@ public final class Constants {
             public static final SparkAbsoluteEncoderConfig ENCODER = new SparkAbsoluteEncoderConfig()
                 .setPositionConversionFactor(ENC_FACTOR)
                 .setVelocityConversionFactor(ENC_FACTOR / 60)
-                .setInverted(false)
-                .setZeroOffset(3.338);
+                .setInverted(true)
+                .setZeroOffset(0.0);
 
             public static final SparkPIDControllerConfig PID = new SparkPIDControllerConfig()
-                .setPID(1.1, 0.0, 0.3)
+                .setPID(1.85, 0.0, 0.3)
                 .setIZone(0.0)
-                .setOutputRange(-0.9, 0.9)
                 .setPositionPIDWrappingEnabled(false);
         }
     }
