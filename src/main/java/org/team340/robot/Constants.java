@@ -49,7 +49,7 @@ public final class Constants {
             .setLabel("Driver")
             .setPort(0)
             .setJoystickDeadband(0.15)
-            .setJoystickThreshold(0.7)
+            .setJoystickThreshold(0.5)
             .setTriggerDeadband(0.1)
             .setTriggerThreshold(0.1);
     }
@@ -177,7 +177,7 @@ public final class Constants {
             .setRampRate(0.03, 0.03)
             .setMotorTypes(SwerveMotor.Type.SPARK_MAX_BRUSHLESS, SwerveMotor.Type.SPARK_MAX_BRUSHLESS)
             .setMaxSpeeds(5.3, 12.3)
-            .setRatelimits(11.0, 28.0)
+            .setRatelimits(11.0, 18.0, 40.0)
             .setTrajectoryConstraints(4.0, 8.0)
             .setPowerProperties(VOLTAGE, 40.0, 40.0)
             .setMechanicalProperties(7.5, 10.0, 4.0)
