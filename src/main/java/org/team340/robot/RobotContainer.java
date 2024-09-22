@@ -67,6 +67,7 @@ public final class RobotContainer {
      */
     private static void configBindings() {
         // Set default commands.
+        intake.setDefaultCommand(intake.hold());
         lights.setDefaultCommand(lights.idle());
         swerve.setDefaultCommand(
             parallel(

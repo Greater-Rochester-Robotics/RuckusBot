@@ -38,7 +38,7 @@ public final class Constants {
      */
     public static final class ControllerConstants {
 
-        public static final double DRIVE_EXP = 2.0;
+        public static final double DRIVE_EXP = 1.0;
         public static final double DRIVE_MULTIPLIER = 0.9;
         public static final double DRIVE_MULTIPLIER_MODIFIED = 1.0;
 
@@ -48,9 +48,9 @@ public final class Constants {
         public static final Controller2Config DRIVER = new Controller2Config()
             .setLabel("Driver")
             .setPort(0)
-            .setJoystickDeadband(0.15)
+            .setJoystickDeadband(0.05)
             .setJoystickThreshold(0.5)
-            .setTriggerDeadband(0.1)
+            .setTriggerDeadband(0.05)
             .setTriggerThreshold(0.1);
     }
 
@@ -88,17 +88,24 @@ public final class Constants {
 
         // Speeds
         public enum IntakeSpeed {
-            INTAKE_OUTER(0.25),
+            HOLD_INNER(0.05),
+            INTAKE_OUTER(0.4),
             INTAKE_INNER(0.3),
-            SHOOT_SHORT(-0.35),
-            SHOOT_MEDIUM(-0.6),
-            SHOOT_FAR(-1.0),
+            SHOOT_SHORT(-0.25, 0.6),
+            SHOOT_MEDIUM(-0.3, 0.7),
+            SHOOT_FAR(-1.0, 2.0),
             SHOOT_INNER(-1.0);
 
             public final double value;
+            public final double spinTime;
 
             private IntakeSpeed(double value) {
+                this(value, 0.0);
+            }
+
+            private IntakeSpeed(double value, double spinTime) {
                 this.value = value;
+                this.spinTime = spinTime;
             }
         }
 
@@ -163,7 +170,7 @@ public final class Constants {
 
         private static final SwerveModuleConfig FRONT_RIGHT = new SwerveModuleConfig()
             .setLabel("Front Right")
-            .useCANcoder(RobotMap.FRONT_RIGHT_ENCODER, -3.0265, false)
+            .useCANcoder(RobotMap.FRONT_RIGHT_ENCODER, -1.4365, false)
             .setPosition(0.288925, -0.288925)
             .setMoveMotor(RobotMap.FRONT_RIGHT_MOVE, true, false)
             .setTurnMotor(RobotMap.FRONT_RIGHT_TURN, false, true);
@@ -177,7 +184,7 @@ public final class Constants {
             .setRampRate(0.03, 0.03)
             .setMotorTypes(SwerveMotor.Type.SPARK_MAX_BRUSHLESS, SwerveMotor.Type.SPARK_MAX_BRUSHLESS)
             .setMaxSpeeds(5.3, 12.3)
-            .setRatelimits(11.0, 18.0, 40.0)
+            .setRatelimits(8.0, 10.0, 40.0)
             .setTrajectoryConstraints(4.0, 8.0)
             .setPowerProperties(VOLTAGE, 40.0, 40.0)
             .setMechanicalProperties(7.5, 10.0, 4.0)
@@ -200,14 +207,14 @@ public final class Constants {
 
         // Limits
         public static final double MIN_POS = Math.toRadians(20.0);
-        public static final double MAX_POS = Math.toRadians(125.0);
+        public static final double MAX_POS = Math.toRadians(140.0);
 
         // Positions
         public enum WristPosition {
-            INTAKE(Math.toRadians(118.0)),
-            SAFE(Math.toRadians(30.0)),
-            SHOOT_SHORT(Math.toRadians(50.0)),
-            SHOOT_MEDIUM(Math.toRadians(50.0)),
+            INTAKE(Math.toRadians(132.0)),
+            SAFE(Math.toRadians(25.0)),
+            SHOOT_SHORT(Math.toRadians(80.0)),
+            SHOOT_MEDIUM(Math.toRadians(55.0)),
             SHOOT_FAR(Math.toRadians(45.0));
 
             public final double value;

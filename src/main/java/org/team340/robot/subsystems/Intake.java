@@ -30,6 +30,20 @@ public class Intake extends GRRSubsystem {
     }
 
     /**
+     * Sets the rollers to hold. Does not end.
+     */
+    public Command hold() {
+        return commandBuilder("intake.hold()")
+            .onInitialize(() -> {
+                upperMotor.stopMotor();
+                innerMotor.set(IntakeSpeed.HOLD_INNER.value);
+            })
+            .onEnd(() -> {
+                innerMotor.stopMotor();
+            });
+    }
+
+    /**
      * Sets the rollers to intake. Does not end.
      */
     public Command intake() {
@@ -53,7 +67,7 @@ public class Intake extends GRRSubsystem {
         return commandBuilder("intake.shoot(" + shootSpeed + ")")
             .onInitialize(() -> {
                 upperMotor.set(shootSpeed.value);
-                innerMotor.stopMotor();
+                innerMotor.set(IntakeSpeed.HOLD_INNER.value);
             })
             .onEnd(() -> {
                 upperMotor.stopMotor();
